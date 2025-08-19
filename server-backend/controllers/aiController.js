@@ -5,6 +5,7 @@ import "dotenv/config";
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import fs from 'fs'
+import pdf from 'pdf-parse/lib/pdf-parse.js'
 
 const AI = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -35,7 +36,7 @@ export const generateArticle = async (req, res) => {
         },
       ],
       temperature: 0.7,
-      max_tokens: length,
+      max_tokens: 100,
     });
 
     const content = response.choices[0].message.content;
@@ -240,9 +241,29 @@ export const resumeReview = async (req, res) => {
     }
 
     const databuffer = fs.readFileSync(resume.path)
+    const pdfData = await pdf(databuffer)
+
+    const prompt = `Review the following resume and provide constructive
+    feedback on its strengths, weaknesses, and areas for improvement. resume 
+    content:\n\n${pdfData.text}`
+
+    const response = await AI.chat.completions.create({
+      model: "gemini-2.0-flash",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    const content = response.choices[0].message.content;
+
 
     await sql`INSERT INTO creations (user_id, prompt, content, type)
-      VALUES (${userId},${`Removed ${object} from image`} , ${imageURL}, 'image')`;
+      VALUES (${userId},'Review the uploaded resume' , ${content}, 'resume-review')`;
 
     return res.json({ success: true, content: imageURL });
   } catch (error) {
