@@ -12,7 +12,7 @@ import ReviewResume from "./Pages/ReviewResume";
 import Community from "./Pages/Community";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
-
+import { Toaster } from "react-hot-toast";
 const App = () => {
 
   const {getToken} = useAuth()
@@ -21,9 +21,10 @@ const App = () => {
   },[])
 
   return (
+    <div>
+      <Toaster />
     <Routes>
       <Route path="/" element={<Home />} />
-
       <Route path="/ai" element={<Layouts />}>
         <Route index element={<Dashboard />} />
         <Route path="write-article" element={<WriteArticle />} />
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="community" element={<Community />} />
       </Route>
     </Routes>
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@
   --color-primary: #5044E5;
  } */
 
- .rest-tw, .reset-tw *{
+ .reset-tw, .reset-tw *{
   all: revert !important;
  }
 .cl-drawerRoot {

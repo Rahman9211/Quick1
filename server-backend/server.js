@@ -5,6 +5,7 @@ import 'dotenv/config';
 import { clerkMiddleware, requireAuth } from '@clerk/express';
 import aiRouter from './routes/aiRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
+import userRoutes from './routes/userRoutes.js';
 
 
 const app = express();
@@ -23,16 +24,15 @@ app.use(clerkMiddleware());
 app.get('/', (req, res) => res.send('Server is Live!'));
 
 // Apply requireAuth only to protected routes
-app.use('/api/ai', aiRouter); // Moved requireAuth here
+// app.use('/api/ai', aiRouter); // Moved requireAuth here
+// app.use('/api/user', userRoutes);
 
-const PORT = process.env.PORT || 8000; // Use environment variable
-app.use(requireAuth())
+const PORT =  5600; // Use environment variable
+// app.use(requireAuth())
+app.use('/api/ai', requireAuth(), aiRouter);
+app.use('/api/user', requireAuth(), userRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`); // Template literal
 });
 
-// Error handling middleware (recommended addition)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
