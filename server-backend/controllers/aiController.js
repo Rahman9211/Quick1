@@ -115,9 +115,9 @@ export const generateImage = async (req, res) => {
     const plan = req.plan;
 
     if (plan !== "premium") {
-      return res.status(402).json({
+      return res.json({
         success: false,
-        message: "Limit reached. Upgrade to continue.",
+        message: "Please buy premium plan first",
       });
     }
 
@@ -141,9 +141,7 @@ export const generateImage = async (req, res) => {
     const { secure_url } = await cloudinary.uploader.upload(base64Image);
 
     await sql`INSERT INTO creations (user_id, prompt, content, type, publish)
-      VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${
-      publish ?? false
-    })`;
+      VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})`;
 
     return res.json({ success: true, content: secure_url });
   } catch (error) {
@@ -234,7 +232,7 @@ export const resumeReview = async (req, res) => {
     if (plan !== "premium") {
       return res.status(402).json({
         success: false,
-        message: "This feature is only available for premium subscription",
+        message: "Please buy plan",
       });
     }
 

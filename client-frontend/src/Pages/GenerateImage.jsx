@@ -45,7 +45,7 @@ const GenerateImage = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Please buy plan");
     }
     setLoading(false)
   };
